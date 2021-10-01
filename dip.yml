@@ -54,6 +54,11 @@ interaction:
     service: postgres
     command: psql -h postgres -U postgres -d postgres
 
+  im:
+    description: Run ./bin/importmap
+    service: backend
+    command: importmap
+
   inspect_all:
     description: Run all checkers
     service: backend

@@ -5,6 +5,8 @@ The repository is just for trying Rails 7 alpha2.
 - Rails 7 alpha2
 - PostgreSQL 13
 
+Note that Webpacker/Webpack, node, and yarn are not included. Use the new import map instead.
+
 ## Environment
 
 - Docker version 20.10.7, build f0df350
@@ -38,3 +40,9 @@ gem 'rexml', '~> 3.2', '>= 3.2.5'
 
 - `dip provision`
 - `dip rails s` and open `lvh.me:3000` on your browser.
+
+## import mapping
+
+Read [importmap-rails README](https://github.com/rails/importmap-rails) first.
+
+Well, you can use `dip im` to invoke `./bin/importmap`.

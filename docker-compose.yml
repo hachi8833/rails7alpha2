@@ -34,7 +34,6 @@ services:
       - EDITOR=vi
     depends_on:
       - postgres
-    env_file: .env
 
   runner:
     <<: *backend
