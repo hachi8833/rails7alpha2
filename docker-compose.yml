@@ -1,0 +1,68 @@
+version: "3.8"
+
+services:
+  app: &app
+    build:
+      context: .
+      dockerfile: ./.dockerdev/Dockerfile
+      args:
+        RUBY_VERSION: "3.0.2"
+        PG_MAJOR: "13"
+        NODE_MAJOR: "14"
+    image: rails7alpha2:1.0.0
+    tmpfs:
+      - /tmp
+
+  backend: &backend
+    <<: *app
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app:cached
+      - rails_cache:/app/tmp/cache
+      - bundle:/bundle
+      - .dockerdev/.psqlrc:/root/.psqlrc:ro
+      - .dockerdev/.bashrc:/root/.bashrc:ro
+    environment:
+      - NODE_ENV=development
+      - RAILS_ENV=${RAILS_ENV:-development}
+      - DATABASE_URL=postgres://postgres:postgres@postgres:5432
+      - BOOTSNAP_CACHE_DIR=/bundle/bootsnap
+      - WEB_CONCURRENCY=0
+      - HISTFILE=/app/log/.bash_history
+      - PSQL_HISTFILE=/app/log/.psql_history
+      - EDITOR=vi
+    depends_on:
+      - postgres
+    env_file: .env
+
+  runner:
+    <<: *backend
+    command: /bin/bash
+    ports:
+      - "3000:3000"
+      - "3002:3002"
+
+  rails:
+    <<: *backend
+    command: bundle exec rails server -b 0.0.0.0
+    ports:
+      - "3000:3000"
+
+  postgres:
+    image: postgres:13
+    volumes:
+      - .dockerdev/.psqlrc:/root/.psqlrc:ro
+      - postgres:/var/lib/postgresql/data
+      - ./log:/root/log:cached
+    environment:
+      - PSQL_HISTFILE=/root/log/.psql_history
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    ports:
+      - 5432
+    env_file: .env
+
+volumes:
+  postgres:
+  bundle:
+  rails_cache:
