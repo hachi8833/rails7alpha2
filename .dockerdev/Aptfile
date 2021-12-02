@@ -1,2 +1,4 @@
 vim
 git
+sqlite3
+libsqlite3-dev

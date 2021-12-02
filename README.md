@@ -3,7 +3,11 @@ The repository is just for trying Rails 7 alpha2.
 ## Structure
 
 - Rails 7 alpha2
-- PostgreSQL 13
+  - import-map (`--javascript=importmap`)
+  - `--skip-webpacker`
+  - SQLite3
+- Ruby 3.1.0-preview1
+  - YJIT（`RUBY_YJIT_ENABLE=1`）
 
 Note that Webpacker/Webpack, node, and yarn are not included. Use the new import map instead.
 

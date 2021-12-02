@@ -17,16 +17,10 @@ RUN apt-get update -qq \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
   && truncate -s 0 /var/log/*log
 
-# PostgreSQLをsources listに追加
-RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' $PG_MAJOR > /etc/apt/sources.list.d/pgdg.list
-
 # 依存関係をインストール
 COPY ./.dockerdev/Aptfile /tmp/Aptfile
 RUN apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get -yq dist-upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
-    libpq-dev \
-    postgresql-client-$PG_MAJOR \
     $(grep -Ev '^\s*#' /tmp/Aptfile | xargs) && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* && \
@@ -44,7 +38,6 @@ ENV PATH /app/bin:$BUNDLE_BIN:$PATH
 
 # RubyGemsをアップグレードして必要なバージョンのbundlerをインストール
 RUN gem update --system &&\
-    gem install rails &&\
     mkdir -p /app
 
 WORKDIR /app
